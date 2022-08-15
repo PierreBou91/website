@@ -1,12 +1,22 @@
 import Link from 'next/link'
-import React from 'react'
 import styles from 'styles/Layout.module.css'
+import { fetchNavigation } from 'server/handler'
+import {
+	useQuery, UseQueryResult,
+} from '@tanstack/react-query'
 
 type Props = {
 	children: React.ReactNode
 }
 
-const navItems = [
+interface NavigationItem {
+	title: string
+	href: string
+	target?: string
+	rel?: string
+}
+
+const placeholder = [
 	{
 		title: "Home",
 		href: "/",
@@ -27,13 +37,44 @@ const navItems = [
 	},
 	{
 		title: "Github",
-		href: "https://github.com/PierreBou91/quantum-walk",
+		href: "https://github.com/PierreBou91",
 		target: "_blank",
 		rel: "norefferer",
-	},
+	}
 ]
 
 const Layout = (props: Props) => {
+
+	const navigation = useQuery(['navigation'], fetchNavigation)
+
+	const renderNavigation = (nav: UseQueryResult<NavigationItem[]>) => {
+		switch (nav.status) {
+			case 'loading': {
+				return (
+					placeholder.map((item) => {
+						return (
+							<Link href={item.href} key={item.title}>
+								<a target={item.target} rel={item.rel}>{item.title}</a>
+							</Link>
+						)
+					})
+				)
+			}
+			case 'error': // Maybe find a better way to handle errors
+				return <div>Error...</div>
+			case 'success':
+				return (
+					nav.data.map((item: any) => {
+						return (
+							<Link key={item.title} href={item.href}>
+								<a target={item.target} rel={item.rel}>{item.title}</a>
+							</Link>
+						)
+					})
+				)
+		}
+	}
+
 	return (
 		<main>
 			<div className={`${styles.header} container`}>
@@ -42,13 +83,8 @@ const Layout = (props: Props) => {
 				</h1>
 				<nav className={`${styles.topNav}`}>
 					{
-						navItems.map((item) => {
-							return (
-								<Link key={item.title} href={item.href}>
-									<a target={item.target} rel={item.rel}>{item.title}</a>
-								</Link>
-							)
-						})}
+						renderNavigation(navigation)
+					}
 				</nav>
 				<form action="submit">
 					<input type="text" />

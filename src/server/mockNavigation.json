@@ -1,0 +1,26 @@
+[
+	{
+		"title": "Home",
+		"href": "/",
+		"target": "",
+		"rel": ""
+	},
+	{
+		"title": "Articles",
+		"href": "/articles",
+		"target": "",
+		"rel": ""
+	},
+	{
+		"title": "About",
+		"href": "/about",
+		"target": "",
+		"rel": ""
+	},
+	{
+		"title": "Github",
+		"href": "https://github.com/PierreBou91",
+		"target": "_blank",
+		"rel": "norefferer"
+	}
+]
