@@ -1,7 +1,8 @@
 import Link from "next/link";
 import styles from "styles/Layout.module.css";
 import { fetchNavigation } from "server/handler";
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+import Head from "next/head";
 
 type Props = {
 	children: React.ReactNode;
@@ -50,43 +51,50 @@ const Layout = (props: Props) => {
 	const navigation = useQuery(["navigation"], fetchNavigation);
 
 	return (
-		<main>
-			<div className={`${styles.header} container`}>
-				<h1>PierreBou</h1>
-				<nav className={`${styles.topNav}`}>
-					{navigation.status === "loading" ? (
-						placeholder.map((item) => {
-							return (
-								<Link href={item.href} key={item.id}>
-									<a target={item.target} rel={item.rel}>
-										{item.title}
-									</a>
-								</Link>
-							);
-						})
-					) : navigation.status === "error" ? ( // Maybe find a better way to handle errors
-						<div>Error...</div>
-					) : navigation.status === "success" ? (
-						navigation.data.map((item: NavigationItem) => {
-							return (
-								<Link key={item.id} href={item.href}>
-									<a target={item.target} rel={item.rel}>
-										{item.title}
-									</a>
-								</Link>
-							);
-						})
-					) : null}
-				</nav>
-				<form action="submit">
-					<input type="text" />
-					<button type="submit" disabled>
-						Search
-					</button>
-				</form>
-			</div>
-			{props.children}
-		</main>
+		<>
+			<Head>
+				<title>Dev Blog</title>
+				<meta name="description" content="Dev blog" />
+				<link rel="icon" href="/favicon.ico" />
+			</Head>
+			<main>
+				<div className={`${styles.header} container`}>
+					<h1>PierreBou</h1>
+					<nav className={`${styles.topNav}`}>
+						{navigation.status === "loading" ? (
+							placeholder.map((item) => {
+								return (
+									<Link href={item.href} key={item.id}>
+										<a target={item.target} rel={item.rel}>
+											{item.title}
+										</a>
+									</Link>
+								);
+							})
+						) : navigation.status === "error" ? ( // Maybe find a better way to handle errors
+							<div>Error...</div>
+						) : navigation.status === "success" ? (
+							navigation.data.map((item: NavigationItem) => {
+								return (
+									<Link key={item.id} href={item.href}>
+										<a target={item.target} rel={item.rel}>
+											{item.title}
+										</a>
+									</Link>
+								);
+							})
+						) : null}
+					</nav>
+					<form action="submit">
+						<input type="text" />
+						<button type="submit" disabled>
+							Search
+						</button>
+					</form>
+				</div>
+				{props.children}
+			</main>
+		</>
 	);
 };
 

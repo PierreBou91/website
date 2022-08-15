@@ -1,7 +1,12 @@
 import mockNavigation from "./mockNavigation.json";
+import mockArticles from "./mockArticles.json";
 
 function fetchNavigation() {
-	return mockNavigation
+	return mockNavigation;
 }
 
-export { fetchNavigation }
+function fetchArticles() {
+	return mockArticles;
+}
+
+export { fetchNavigation, fetchArticles };
