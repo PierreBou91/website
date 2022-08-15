@@ -1,99 +1,93 @@
-import Link from 'next/link'
-import styles from 'styles/Layout.module.css'
-import { fetchNavigation } from 'server/handler'
-import {
-	useQuery, UseQueryResult,
-} from '@tanstack/react-query'
+import Link from "next/link";
+import styles from "styles/Layout.module.css";
+import { fetchNavigation } from "server/handler";
+import { useQuery, UseQueryResult } from "@tanstack/react-query";
 
 type Props = {
-	children: React.ReactNode
-}
+	children: React.ReactNode;
+};
 
 interface NavigationItem {
-	title: string
-	href: string
-	target?: string
-	rel?: string
+	id: string;
+	title: string;
+	href: string;
+	target?: string;
+	rel?: string;
 }
 
 const placeholder = [
 	{
+		id: "5b9f6a43e97b6e0014enjf86a9vb",
 		title: "Home",
 		href: "/",
 		target: "",
 		rel: "",
 	},
 	{
+		id: "5b9f6a43e97b6e0014ef86abv9vb",
 		title: "Articles",
 		href: "/articles",
 		target: "",
 		rel: "",
 	},
 	{
+		id: "5b9f6a43e97b6e0014ef86a9dfvb",
 		title: "About",
 		href: "/about",
 		target: "",
 		rel: "",
 	},
 	{
+		id: "5b9f6a43e97b6e0014ef86a9vdf",
 		title: "Github",
 		href: "https://github.com/PierreBou91",
 		target: "_blank",
 		rel: "norefferer",
-	}
-]
+	},
+];
 
 const Layout = (props: Props) => {
-
-	const navigation = useQuery(['navigation'], fetchNavigation)
-
-	const renderNavigation = (nav: UseQueryResult<NavigationItem[]>) => {
-		switch (nav.status) {
-			case 'loading': {
-				return (
-					placeholder.map((item) => {
-						return (
-							<Link href={item.href} key={item.title}>
-								<a target={item.target} rel={item.rel}>{item.title}</a>
-							</Link>
-						)
-					})
-				)
-			}
-			case 'error': // Maybe find a better way to handle errors
-				return <div>Error...</div>
-			case 'success':
-				return (
-					nav.data.map((item: any) => {
-						return (
-							<Link key={item.title} href={item.href}>
-								<a target={item.target} rel={item.rel}>{item.title}</a>
-							</Link>
-						)
-					})
-				)
-		}
-	}
+	const navigation = useQuery(["navigation"], fetchNavigation);
 
 	return (
 		<main>
 			<div className={`${styles.header} container`}>
-				<h1>
-					PierreBou
-				</h1>
+				<h1>PierreBou</h1>
 				<nav className={`${styles.topNav}`}>
-					{
-						renderNavigation(navigation)
-					}
+					{navigation.status === "loading" ? (
+						placeholder.map((item) => {
+							return (
+								<Link href={item.href} key={item.id}>
+									<a target={item.target} rel={item.rel}>
+										{item.title}
+									</a>
+								</Link>
+							);
+						})
+					) : navigation.status === "error" ? ( // Maybe find a better way to handle errors
+						<div>Error...</div>
+					) : navigation.status === "success" ? (
+						navigation.data.map((item: NavigationItem) => {
+							return (
+								<Link key={item.id} href={item.href}>
+									<a target={item.target} rel={item.rel}>
+										{item.title}
+									</a>
+								</Link>
+							);
+						})
+					) : null}
 				</nav>
 				<form action="submit">
 					<input type="text" />
-					<button type="submit" disabled>Search</button>
+					<button type="submit" disabled>
+						Search
+					</button>
 				</form>
 			</div>
 			{props.children}
-		</main >
-	)
-}
+		</main>
+	);
+};
 
-export default Layout
+export default Layout;
